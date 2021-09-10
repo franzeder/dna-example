@@ -1,4 +1,4 @@
-R Notebook
+Reproduction files for the chapter *Discourse Network Analysis*
 ================
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you
