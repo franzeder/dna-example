@@ -14,3 +14,9 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # loading required packages for using RStudio to analyze DNA
 p_load(rDNA)
 
+# loading dna
+dna_init()
+
+# connection to DNA-file
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+
