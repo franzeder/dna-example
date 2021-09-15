@@ -1,48 +1,46 @@
 source("script_dna_010-workspace.R")
 
-p_load(statnet)
+set.seed(19030023)
 
-# Overall congruence network
-## person x concept, congruence-method, including duplicates
-congruence <- dna_network(conn,
-                          networkType = "onemode",
-                          statementType = "DNA Statement",
-                          variable1 = "person",
-                          variable2 = "concept",
-                          qualifier = "agreement",
-                          qualifierAggregation = "congruence",
-                          duplicates = "include")
+selection_concept <- c(1, 11, 12, 13)
+concept$value[selection_concept]
+exclusion_concept <- concept$value[-selection_concept]
 
-nw <- network(congruence)
-plot(nw,
-     displaylabels = TRUE,
-     label.cex = 0.5,
-     usearrows = FALSE,
-     edge.col = "gray"
-)
+selection_person <- person %>% filter(frequency >5)
+selection_person$value
+exclusion_person <- person %>% filter(frequency < 6)
 
-# 2002 congruence network
-## person x concept, congruence-method, including duplicates
 congruence_2002 <- dna_network(conn,
-                          networkType = "onemode",
-                          statementType = "DNA Statement",
-                          variable1 = "person",
-                          variable2 = "concept",
-                          qualifier = "agreement",
-                          qualifierAggregation = "congruence",
-                          stop.date = "31.12.2002",
-                          duplicates = "include")
+                    networkType = "onemode",
+                    statementType = "DNA Statement",
+                    variable1 = "person",
+                    variable2 = "concept",
+                    qualifier = "agreement",
+                    qualifierAggregation = "congruence",
+                    stop.date = "01.01.2003",
+                    duplicates = "week",
+                    excludeValues = list(person = exclusion_person$value,
+                                         concept = exclusion_concept))
 
-nw <- network(congruence_2002)
-plot(nw,
+nw_2002 <- network(congruence_2002)
+
+x <- t(congruence_2002)
+y <- selection_person %>% filter(value %in% row.names(x))
+
+pdf(file = "fig_network_congruence_2002.pdf",
+    width = 8,
+    height = 8)
+plot(nw_2002,
+     edge.lwd = congruence_2002,
      displaylabels = TRUE,
      label.cex = 0.5,
      usearrows = FALSE,
-     edge.col = "gray"
-)
+     edge.col = "gray85",
+     vertex.col = y$color,
+     label = y$value
+     )
+dev.off()
 
-# 2003 congruence network
-## person x concept, congruence-method, including duplicates
 congruence_2003 <- dna_network(conn,
                                networkType = "onemode",
                                statementType = "DNA Statement",
@@ -51,33 +49,27 @@ congruence_2003 <- dna_network(conn,
                                qualifier = "agreement",
                                qualifierAggregation = "congruence",
                                start.date = "01.01.2003",
-                               duplicates = "include")
+                               duplicates = "week",
+                               excludeValues = list(person = exclusion_person$value,
+                                                    concept = exclusion_concept))
 
-nw <- network(congruence_2003)
-plot(nw,
+nw_2003 <- network(congruence_2003)
+
+x <- t(congruence_2003)
+y <- selection_person %>% filter(value %in% row.names(x))
+
+pdf(file = "fig_network_congruence_2003.pdf",
+    width = 8,
+    height = 8)
+plot(nw_2003,
      displaylabels = TRUE,
      label.cex = 0.5,
      usearrows = FALSE,
-     edge.col = "gray"
-)
+     edge.col = "gray85",
+     vertex.col = y$color,
+     label = y$value
+     )
+dev.off()
 
-# barplot of concept agreement/disagreement
-dna_barplot(conn,
-            of = "concept",
-            fontSize = 10,
-            stop.date = "31.12.2002")
 
-dna_barplot(conn,
-            of = "concept",
-            fontSize = 10,
-            start.date = "01.01.2003")
-
-concepts <- dna_getStatements(conn, 1)
-concepts <- unique(concepts$concept)
-concepts_war <- concepts[-9]
-
-dna_barplot(conn,
-            of = "organization",
-            fontSize = 10,
-            excludeValues = list("concept" = concepts_war))
 

@@ -20,9 +20,12 @@ install.packages("rJava")
 # package needed for installing R packages from Github
 install.packages("remotes")
 
-# installing rDNA
+# installing rDNA package
 remotes::install_github("leifeld/dna/rDNA@*release",
                         INSTALL_opts = "--no-multiarch")
+
+# installing ggnet2 package
+devtools::install_github("briatte/ggnet")
 
 # package for loading R packages and installing them, if they are not already installed
 install.packages("pacman")
