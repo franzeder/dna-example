@@ -2,6 +2,9 @@
 title: "Reproduction files for the chapter 'Discourse Network Analysis'"
 output: rmarkdown::github_document
 bibliography: handbook_dna_lit.bib
+header-includes:
+- \usepackage{caption}
+fig_caption: true
 ---
 
 # Abstract
@@ -18,7 +21,11 @@ This coding-scheme is then used to code statements that are the basic units of a
 
 Unlike Foucauldian discourse analysis that ultimately seeks to unveil power relations, the overall aim of the second stage of DNA is to transform the generated data (i.e., the sum of coded statements) into a two-mode network (a bipartite graph), also known as an affiliation network of actors (or organizations) and claims (for the mathematical details of this transformation, see @Leifeld2019) that allows us to display the content, dynamic and drivers of political debates. In this affiliation network (see figure 1), every actor referring to a certain claim is displayed as an actor-node with an edge, linking the actor to the specific claim-node. This graph then allows us to gain insights into the content of the debate (the sum of claim-nodes) and who carries these claims (the actor nodes) [@Leifeld2018, 306].
 
-![Figure 1: Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims.](fig/fig1_affiliation-network-example.png)
+```{r, echo=FALSE, fig.align = "center", out.width = "75%", fig.cap="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims."}
+knitr::include_graphics("fig/fig1_affiliation-network-example.png")
+```
+
+%![Figure 1: Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims.](fig/fig1_affiliation-network-example.png)
 
 In the next step, we are able to transform this two-mode affiliation network into a one-mode congruence (or conflict) network of actors or claims (see figure 2). This transformation assumes that networks are "belief similarity networks of actors" [@Leifeld2013, 170] in the sense that 'the more concepts [(i.e., claims), FE] two actors agree (or both disagree) on, the more similar they are in terms of preferences on concepts in the discourse' [@Leifeld2013, 174]. Hence, actor congruence networks are networks that link actors to each other by edges, whenever these actors share the same claim by either both agreeing or both disagreeing to it. Claim congruence networks, on the other hand, are networks that display the edges between claims, whenever actors refer to the same claim in the same direction (i.e., both agreeing or both disagreeing). The same logic applies to conflict networks that display actors or claims, where actors have different attitudes towards claims (e.g., one actor agrees to a claim, the other one disagrees). One can of course also combine both, concurrence and conflict networks, with the subtraction mode, where agreements and disagreements are added up. So, for example, when two actors agree to a claim two times, and one time they disagree to the same claim, the overall value of agreement is +1.
 
@@ -47,18 +54,5 @@ Figure 4: Dynamic actor congruence network
 
 To summarize this section, DNA proceeds in two steps. First, the statements of actors are coded using qualitative content analysis and a deductively and/or inductively developed coding-scheme. Second, these statements are then used to build affiliation- and congruence-networks that allow us to gain more insights into the content, dynamic, and structure of the debate over time. By applying different sorts of network measurements, we are able to describe the characteristics of, and to detect powerful nodes in the network.
 
-
-<!-- This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.  -->
-
-<!-- Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*.  -->
-
-<!-- ```{r} -->
-<!-- plot(cars) -->
-<!-- ``` -->
-
-<!-- Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*. -->
-
-<!-- When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).  -->
-
-<!-- The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed. -->
+# Bibliography
 

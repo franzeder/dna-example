@@ -1,6 +1,8 @@
 Reproduction files for the chapter ‘Discourse Network Analysis’
 ================
 
+
+
 # Abstract
 
 This [R Markdown](http://rmarkdown.rstudio.com) Notebook is part of the
@@ -67,7 +69,9 @@ linking the actor to the specific claim-node. This graph then allows us
 to gain insights into the content of the debate (the sum of claim-nodes)
 and who carries these claims (the actor nodes) (Leifeld 2018, 306).
 
-![Figure 1: Affiliation network with actors (a) agreeing to certain
+<img src="fig/fig1_affiliation-network-example.png" title="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims." alt="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims." width="75%" style="display: block; margin: auto;" />
+
+%![Figure 1: Affiliation network with actors (a) agreeing to certain
 claims (c). The edgeweights (displayed by the line width) provide
 information about the extent of agreement towards
 claims.](fig/fig1_affiliation-network-example.png)
@@ -173,14 +177,7 @@ structure of the debate over time. By applying different sorts of
 network measurements, we are able to describe the characteristics of,
 and to detect powerful nodes in the network.
 
-<!-- This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.  -->
-<!-- Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*.  -->
-<!-- ```{r} -->
-<!-- plot(cars) -->
-<!-- ``` -->
-<!-- Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*. -->
-<!-- When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).  -->
-<!-- The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed. -->
+# Bibliography
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
