@@ -69,36 +69,40 @@ linking the actor to the specific claim-node. This graph then allows us
 to gain insights into the content of the debate (the sum of claim-nodes)
 and who carries these claims (the actor nodes) (Leifeld 2018, 306).
 
-<img src="fig/fig1_affiliation-network-example.png" title="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims." alt="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims." width="75%" style="display: block; margin: auto;" />
+![](fig/fig1_affiliation-network-example.png)
+
 Figure 1: Affiliation network with actors (a) agreeing to certain claims
 (c). The edgeweights (displayed by the line width) provide information
 about the extent of agreement towards claims.
 
 In the next step, we are able to transform this two-mode affiliation
 network into a one-mode congruence (or conflict) network of actors or
-claims (see figure 2). This transformation assumes that networks are
-“belief similarity networks of actors” (Leifeld 2013, 170) in the sense
-that ‘the more concepts \[(i.e., claims), FE\] two actors agree (or both
-disagree) on, the more similar they are in terms of preferences on
-concepts in the discourse’ (Leifeld 2013, 174). Hence, actor congruence
-networks are networks that link actors to each other by edges, whenever
-these actors share the same claim by either both agreeing or both
-disagreeing to it. Claim congruence networks, on the other hand, are
-networks that display the edges between claims, whenever actors refer to
-the same claim in the same direction (i.e., both agreeing or both
-disagreeing). The same logic applies to conflict networks that display
-actors or claims, where actors have different attitudes towards claims
-(e.g., one actor agrees to a claim, the other one disagrees). One can of
-course also combine both, concurrence and conflict networks, with the
-subtraction mode, where agreements and disagreements are added up. So,
-for example, when two actors agree to a claim two times, and one time
-they disagree to the same claim, the overall value of agreement is +1.
+claims (see figures 2a and 2b). This transformation assumes that
+networks are “belief similarity networks of actors” (Leifeld 2013, 170)
+in the sense that ‘the more concepts \[(i.e., claims), FE\] two actors
+agree (or both disagree) on, the more similar they are in terms of
+preferences on concepts in the discourse’ (Leifeld 2013, 174). Hence,
+actor congruence networks are networks that link actors to each other by
+edges, whenever these actors share the same claim by either both
+agreeing or both disagreeing to it. Claim congruence networks, on the
+other hand, are networks that display the edges between claims, whenever
+actors refer to the same claim in the same direction (i.e., both
+agreeing or both disagreeing). The same logic applies to conflict
+networks that display actors or claims, where actors have different
+attitudes towards claims (e.g., one actor agrees to a claim, the other
+one disagrees). One can of course also combine both, concurrence and
+conflict networks, with the subtraction mode, where agreements and
+disagreements are added up. So, for example, when two actors agree to a
+claim two times, and one time they disagree to the same claim, the
+overall value of agreement is +1.
 
-![Figure 2a: Actor-congruence
-network](fig/fig2a_congruence-network-example-a.png)
+![](fig/fig2a_congruence-network-example-a.png)
 
-![Figure 2b: Claim-congruence
-network](fig/fig2b_congruence-network-example-b.png)
+Figure 2a: Actor-congruence network
+
+![](fig/fig2b_congruence-network-example-b.png)
+
+Figure 2b: Claim-congruence network
 
 So consequently, the more often actors refer to the same claim, the
 larger the edge-weight between these actors become. Hence, the
@@ -112,19 +116,21 @@ claims by actors in relation to their overall possibilities to mention
 claims in the first place.
 
 The time stamp variable of statements is useful to display dynamic
-networks (see figure 3). In this case, networks are drawn by grouping
-statements into certain time periods (e.g., statements of the same day,
-the same month, or the same year). “\[M\]odelling the development of
-political debates as dynamic networks may enable us to identify
-recurring mechanisms that drive the development of political debates”
-(Haunss et al. 2020, 326). Hence, dynamic networks are essential tools
-to understand the continuity and change of policies.
+networks (see figures 3a and 3b). In this case, networks are drawn by
+grouping statements into certain time periods (e.g., statements of the
+same day, the same month, or the same year). “\[M\]odelling the
+development of political debates as dynamic networks may enable us to
+identify recurring mechanisms that drive the development of political
+debates” (Haunss et al. 2020, 326). Hence, dynamic networks are
+essential tools to understand the continuity and change of policies.
 
-![Figure 3a: Dynamic affiliation network at
-t\~0](fig/fig3a_dynamic-network-example-a.png)
+![](fig/fig3a_dynamic-network-example-a.png)
 
-![Figure 3b: Dynamic affiliation network at
-t\~1](fig/fig3a_dynamic-network-example-a.png)
+Figure 3a: Dynamic affiliation network at t\~0
+
+![](fig/fig3b_dynamic-network-example-b.png)
+
+Figure 3b: Dynamic affiliation network at t\~1
 
 Finally, we can refer to various network measurements to better describe
 the characteristics of the overall discourse network and the discourse
@@ -160,11 +166,15 @@ group nodes into clusters or communities of like-minded nodes, because
 they share a higher number of similarities than other nodes (Newman
 2010, 357–58 and 371-391). These approaches, therefore, are the
 preferred measurements to group actors into discourse coalitions and to
-make them visible (see, for example, figure 4).
+make them visible (see, for example, figures 4a and 4b).
 
-    (a) Network at t0   (b) Network at 1
+![](fig/fig4a_dynamic-actor-example-a.png)
 
-Figure 4: Dynamic actor congruence network
+Figure 4a: Dynamic actor congruence network at t\~0
+
+![](fig/fig4b_dynamic-actor-example-b.png)
+
+Figure 4b: Dynamic actor congruence network at t\~1
 
 To summarize this section, DNA proceeds in two steps. First, the
 statements of actors are coded using qualitative content analysis and a
