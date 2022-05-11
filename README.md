@@ -70,11 +70,9 @@ to gain insights into the content of the debate (the sum of claim-nodes)
 and who carries these claims (the actor nodes) (Leifeld 2018, 306).
 
 <img src="fig/fig1_affiliation-network-example.png" title="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims." alt="Affiliation network with actors (a) agreeing to certain claims (c). The edgeweights (displayed by the line width) provide information about the extent of agreement towards claims." width="75%" style="display: block; margin: auto;" />
-
-%![Figure 1: Affiliation network with actors (a) agreeing to certain
-claims (c). The edgeweights (displayed by the line width) provide
-information about the extent of agreement towards
-claims.](fig/fig1_affiliation-network-example.png)
+Figure 1: Affiliation network with actors (a) agreeing to certain claims
+(c). The edgeweights (displayed by the line width) provide information
+about the extent of agreement towards claims.
 
 In the next step, we are able to transform this two-mode affiliation
 network into a one-mode congruence (or conflict) network of actors or
