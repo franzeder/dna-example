@@ -1,7 +1,7 @@
 ---
 title: "Reproduction files for the chapter 'Discourse Network Analysis'"
-output: rmarkdown::github_document 
-<!-- output: html_document -->
+output: rmarkdown::github_document
+<!-- output: html_document  -->
 bibliography: handbook_dna_lit.bib
 header-includes:
 - \usepackage{caption}
@@ -11,6 +11,10 @@ fig_caption: true
 # Abstract
 
 This [R Markdown](http://rmarkdown.rstudio.com) Notebook is part of the chapter 'Discourse Network Anylsis' in *The Routledge Handbook of Foreign Policy Methods* (edited by Patrick A. Mello & Falk Ostermann). It gives readers a more detailed discussion of DNA as a the method, the coding-scheme, allows them access to the dataset and the script used for analysis, and shows further graphs that are not used in the chapter, due to page-limitation.
+
+<span style="color: red;">text</span>
+
+<mark>highlight</mark>
 
 # DNA as a Method
 
@@ -42,11 +46,11 @@ The time stamp variable of statements is useful to display dynamic networks (see
 
 ![](fig/fig3a_dynamic-network-example-a.png)
 
-Figure 3a: Dynamic affiliation network at t~0
+Figure 3a: Dynamic affiliation network at t~0~
 
 ![](fig/fig3b_dynamic-network-example-b.png)
 
-Figure 3b: Dynamic affiliation network at t~1
+Figure 3b: Dynamic affiliation network at t~1~
 			
 Finally, we can refer to various network measurements to better describe the characteristics of the overall discourse network and the discourse coalitions within it. Three of these measurements are especially helpful in the context of DNA: density, centrality, and various community detection algorithms. First, density describes the fraction of the maximum number of possible edges between nodes that is present in a network. By doing so, density gives an impression how connected nodes in a network really are [@Newman2010, 134–135]. The value for density ranges between 0 (there are no edges in a network, so that not a single node is linked to at least one other node) and 1 (the maximum number of edges is present because every node is connected to every other node). Thereby, density gives us information about the degree of interaction in a network. The higher the number of nodes and edges between these nodes in a network is, the more likely it is that a variety of claims and a greater number of actors support these claims in a debate.
 
@@ -56,13 +60,19 @@ Third, community detection algorithms like modularity-maximization, hierarchical
 
 ![](fig/fig4a_dynamic-actor-example-a.png)
 
-Figure 4a: Dynamic actor congruence network at t~0
+Figure 4a: Dynamic actor congruence network at t~0~
 
 ![](fig/fig4b_dynamic-actor-example-b.png)
 
-Figure 4b: Dynamic actor congruence network at t~1
+Figure 4b: Dynamic actor congruence network at t~1~
 
 To summarize this section, DNA proceeds in two steps. First, the statements of actors are coded using qualitative content analysis and a deductively and/or inductively developed coding-scheme. Second, these statements are then used to build affiliation- and congruence-networks that allow us to gain more insights into the content, dynamic, and structure of the debate over time. By applying different sorts of network measurements, we are able to describe the characteristics of, and to detect powerful nodes in the network.
+
+# Coding Scheme
+
+# Description of the dataset
+
+# Scripts and graphs
 
 # Bibliography
 

@@ -13,6 +13,10 @@ coding-scheme, allows them access to the dataset and the script used for
 analysis, and shows further graphs that are not used in the chapter, due
 to page-limitation.
 
+<span style="color: red;">text</span>
+
+<mark>highlight</mark>
+
 # DNA as a Method
 
 Methodologically, DNA proceeds in two stages and uses a combination of
@@ -126,11 +130,11 @@ essential tools to understand the continuity and change of policies.
 
 ![](fig/fig3a_dynamic-network-example-a.png)
 
-Figure 3a: Dynamic affiliation network at t\~0
+Figure 3a: Dynamic affiliation network at t<sub>0</sub>
 
 ![](fig/fig3b_dynamic-network-example-b.png)
 
-Figure 3b: Dynamic affiliation network at t\~1
+Figure 3b: Dynamic affiliation network at t<sub>1</sub>
 
 Finally, we can refer to various network measurements to better describe
 the characteristics of the overall discourse network and the discourse
@@ -170,11 +174,11 @@ make them visible (see, for example, figures 4a and 4b).
 
 ![](fig/fig4a_dynamic-actor-example-a.png)
 
-Figure 4a: Dynamic actor congruence network at t\~0
+Figure 4a: Dynamic actor congruence network at t<sub>0</sub>
 
 ![](fig/fig4b_dynamic-actor-example-b.png)
 
-Figure 4b: Dynamic actor congruence network at t\~1
+Figure 4b: Dynamic actor congruence network at t<sub>1</sub>
 
 To summarize this section, DNA proceeds in two steps. First, the
 statements of actors are coded using qualitative content analysis and a
@@ -184,6 +188,12 @@ that allow us to gain more insights into the content, dynamic, and
 structure of the debate over time. By applying different sorts of
 network measurements, we are able to describe the characteristics of,
 and to detect powerful nodes in the network.
+
+# Coding Scheme
+
+# Description of the dataset
+
+# Scripts and graphs
 
 # Bibliography
 
