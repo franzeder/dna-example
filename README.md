@@ -242,29 +242,45 @@ concept <- dna_getAttributes(conn, variable = "concept")
 
 ## Plotting Affiliation Networks
 
+Before plotting the affiliation networks, it makes sense to have a look
+at the discursive content of the debate by using the `dna_barplot`
+command and displaying the overall agreement and disagreement of actors
+towards claims, grouped by year.
+
 ``` r
 concepts_2002 <- dna_barplot(conn, 
-                             of = "concept", fontSize = 10, 
-                             stop.date = "01.01.2003")
+                             of = "concept", fontSize = 10, # plot all claims
+                             stop.date = "01.01.2003") # plot claims through 31 December 2002
 
 concepts_2002
 ```
 
 ![](README_files/figure-gfm/barplot-concepts2002-1.png)<!-- -->
 
+As the barplot of 2003 clearly shows, **22 - war** becomes a contested
+claim but actors agree, that Iraq/Saddam Hussein poses a **07 -
+humanitarian** threat.
+
 ``` r
 concepts_2003 <- dna_barplot(conn, 
-                             of = "concept", fontSize = 10, 
-                             start.date = "01.01.2003")
+                             of = "concept", fontSize = 10, # plott all claims
+                             start.date = "01.01.2003") # plot claims from 1 January 2003 onwards
 
 concepts_2003
 ```
 
 ![](README_files/figure-gfm/barplot-concepts2003-1.png)<!-- -->
 
+In the next step, I display the affiliation network of the most active
+speakers (those with more than 9 mentions of a claim) towards four
+central claims in the debate (i.e., **01 - imminent**, **22 - war**,
+**23 - containment/deterrence**, **24 - inspections**). By it doing so,
+I able to show which actors referred to what concepts in the overall
+debate.
+
 ``` r
-selection_person <- person %>% filter(frequency >9)
-selection_person$value
+selection_person <- person %>% filter(frequency >9) # select actors with more than 9 mentions of a claim
+selection_person$value # show this selection
 ```
 
     ##  [1] "A MacKay"        "A Simpson"       "B George"        "C Kennedy"      
@@ -274,23 +290,23 @@ selection_person$value
     ## [17] "M Moore"         "P Kilfoyle"      "T Blair"         "T Lloyd"
 
 ``` r
-exclusion_person <- person %>% filter(frequency < 10)
+exclusion_person <- person %>% filter(frequency < 10) # select actors with less than 10 mentions of a claim
 
-selection_concept <- c(1, 11, 12, 13)
-concept$value[selection_concept]
+selection_concept <- c(1, 11, 12, 13) # selecting the concepts '01 - imminent', '22 - war', '23 - containment/deterrence', '24 - inspections'
+concept$value[selection_concept] # show claims
 ```
 
     ## [1] "01 - imminent"               "22 - war"                   
     ## [3] "23 - containment/deterrence" "24 - inspections"
 
 ``` r
-exclusion_concept <- concept$value[-selection_concept]
+exclusion_concept <- concept$value[-selection_concept] # create new object with all claim, except the selected claims
 
 
 # Affiliation network
 ## person x concept, substract-method and normalization, including duplicates
 affil <- dna_network(conn,
-                          networkType = "twomode",
+                          networkType = "twomode", # affiliation network
                           statementType = "DNA Statement",
                           variable1 = "person",
                           variable2 = "concept",
@@ -299,7 +315,7 @@ affil <- dna_network(conn,
                           normalization = "prominence",
                           duplicates = "document",
                           verbose = TRUE,
-                     excludeValues = list(person = exclusion_person$value,
+                     excludeValues = list(person = exclusion_person$value, # exclude certain actors and claims
                                           concept = exclusion_concept))
 ```
 
@@ -471,16 +487,16 @@ affil <- dna_network(conn,
     ## (5/5): Retrieving results.
 
 ``` r
-x <- t(affil)
-y <- selection_person %>% filter(value %in% colnames(x))
+x <- t(affil) # transpose matrix
+y <- selection_person %>% filter(value %in% colnames(x)) # add names of selected actors to matrix
 
-nw <- network(affil, bipartite = TRUE)
+nw <- network(affil, bipartite = TRUE) # convert matrix to a nework-object
 
-colors <- as.character(t(affil))
+colors <- as.character(t(affil)) 
 colors <- colors[colors != "0"]
-colors[colors < 0] <- "gray85"
-colors[colors != "gray85"] <- "black"
-set.edge.attribute(nw, "color", colors)
+colors[colors < 0] <- "gray85" # add gray color for negative values
+colors[colors != "gray85"] <- "black" # add black color for positive values
+set.edge.attribute(nw, "color", colors) # add edge attributes colors
 
 plot(nw,
      edge.col = get.edge.attribute(nw, "color"),
@@ -494,6 +510,12 @@ plot(nw,
 <img src="README_files/figure-gfm/affiliation network-1.png" width="150%" />
 
 ## Plotting Congruence Networks
+
+After plotting the affiliation network, we can now have a closer look at
+the congruence network, that displays the links of actors based on their
+shared use of claims. To highlight the dynamic character of the debate,
+we group these congruence networks in two periods, that is the years
+**2002** and **2003**.
 
 ``` r
 set.seed(19030023)
@@ -532,16 +554,16 @@ selection_person$value
 exclusion_person <- person %>% filter(frequency < 6)
 
 congruence_2002 <- dna_network(conn,
-                    networkType = "onemode",
+                    networkType = "onemode", # congruence network
                     statementType = "DNA Statement",
-                    variable1 = "person",
-                    variable2 = "concept",
-                    qualifier = "agreement",
+                    variable1 = "person", # actors
+                    variable2 = "concept", # grouped via shared claims
+                    qualifier = "agreement", 
                     qualifierAggregation = "congruence",
-                    stop.date = "01.01.2003",
-                    duplicates = "week",
-                    excludeValues = list(person = exclusion_person$value,
-                                         concept = exclusion_concept))
+                    stop.date = "01.01.2003", # until 1 January 2003 (i.e., all claims from 2002)
+                    duplicates = "week", # ignore duplicates within a week
+                    excludeValues = list(person = exclusion_person$value, # exclude actors with less than 9 mentions of claims
+                                         concept = exclusion_concept)) # exclude concepts, we are not interested in
 ```
 
     ## (1/5): Processing network options... Done.
@@ -690,6 +712,17 @@ plot(nw_2002,
 ```
 
 <img src="README_files/figure-gfm/congruence network 2002-1.png" width="150%" />
+
+As the both plots clearly show, the majority of actors stuck together
+very closely in 2002, by referring to similar claims and united in
+opposition to war as a policy option. Furthermore, already in 2002, PM
+Blair (accompanied by another cabinet member and Tory MPs) deviated from
+this anti-war discourse. In 2003, however, the PM and his cabinet (high
+edge betweenness of PM Blair and Foreign Secretary Straw) were
+successful in convincing a majority of MPs that war is a necessary evil.
+Hence, the discourse in 2003 is characterized by **two opposing
+discourse coalitions** – one coalition in favor and one against war as
+viable option.
 
 ``` r
 congruence_2003 <- dna_network(conn,
@@ -853,6 +886,13 @@ plot(nw_2003,
 
 ## Cluster Analysis
 
+In the final step, we **cluster organizations** (i.e., parties)
+according to their overall positions towards the four central claims
+mentioned before and display these organizations as distinctive branches
+by using the `dna_cluster` command. Organizations of the same branch or
+subbranch are ideologically closer than organizations of different
+branches.
+
 ``` r
 selection <- c(1, 11, 12, 13)
 concept$value[selection]
@@ -869,16 +909,19 @@ clust_2002 <- dna_cluster(conn,
                           clust.method = "edge_betweenness",
                           duplicates = "document",
                           excludeValues = list(concept = exclusion))
-```
 
-    ## Warning: In factor analysis:  Error in optim(start, FAfn, FAgr, method = "L-BFGS-B", lower = lower, : nicht endlicher Wert von optim angegeben
-
-``` r
 dna_plotDendro(clust_2002,
                show_legend = FALSE)
 ```
 
 <img src="README_files/figure-gfm/cluster analysis 2002-1.png" width="150%" />
+
+The interesting point here is, that the Cabinet’s final discourse in the
+debate in 2003 resembled the discourse of the Conservative party (i.e.,
+the major opposition). In contrast, Labour’s discourse (i.e., the
+discourse of PM’s own party) shared more of the claims the Liberal
+Democrats (i.e., the major opposition to war) applied in their
+storylines.
 
 ``` r
 selection <- c(1, 11, 12, 13)
@@ -896,14 +939,7 @@ clust_2003 <- dna_cluster(conn,
                           clust.method = "edge_betweenness",
                           duplicates = "document",
                           excludeValues = list(concept = exclusion))
-```
 
-    ## Warning: In factor analysis:  Error in solve.default(cv): Lapackroutine dgesv: System ist genau singulär: U[8,8] = 0
-
-    ## Warning in type.convert.default(unlist(x, use.names = FALSE)): 'as.is' should be
-    ## specified by the caller; using TRUE
-
-``` r
 dna_plotDendro(clust_2003,
                show_legend = FALSE)
 ```
