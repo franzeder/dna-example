@@ -167,8 +167,748 @@ After coding the dataset, we then transform the generated data (i.e.,
 the sum of coded statements) into a two-mode network (a bipartite
 graph), also known as an affiliation network of actors (or
 organizations) and claims (for the mathematical details of this
-transformation, see Leifeld, Gruber, and Bossner (2019)) that allows us
+transformation, see Leifeld, Gruber, and Bossner (2019)), that allows us
 to display the content, dynamic and drivers of political debates.
+Chapter 7 (pages 59-79) of the [*Discourse Network Analyzer
+Manual*](https://github.com/leifeld/dna/releases/download/v2.0-beta.24/dna-manual.pdf)
+discusses this export with its many options in detail.
+
+In the next paragraphs I will focus on the `R-Code` and show how to
+import, analyze and plot the coded-data in this framework (see also
+Chapter 8 (pages 80-119) of the [*Discourse Network Analyzer
+Manual*](https://github.com/leifeld/dna/releases/download/v2.0-beta.24/dna-manual.pdf)).
+
+## Installing and configuring R and all required packages
+
+Users first have to install the latest version of **R** – “a free
+software environment for statistical computing and graphics” – from [The
+Comprehensive R Archive Network](https://cran.r-project.org/). Users
+should then install [**RSTudio
+Desktop**](https://www.rstudio.com/products/rstudio/download/) – “an
+integrated development environment (IDE) for R” – that makes programming
+in R easier.
+
+After installing R and RStudio, users have to install all required
+packages (i.e., extensions that increase the functionality of R).
+
+``` r
+install.packages("rJava")
+
+# package needed for installing R packages from Github
+install.packages("remotes")
+
+# installing rDNA package
+remotes::install_github("leifeld/dna/rDNA@*release",
+                        INSTALL_opts = "--no-multiarch")
+
+# installing ggnet2 package for plotting networks
+devtools::install_github("briatte/ggnet")
+
+# package for loading R packages and installing them, if they are not already installed
+install.packages("pacman")
+```
+
+In the next steps, users have to set the path for the working directory
+and load the required packages.
+
+``` r
+# set the working directory in RStudio to the current file location
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# loading the "pacman" package for loading (p_load) packages and installing them,
+## if they are not already installed
+require(pacman)
+
+# loading required packages for using RStudio to analyze DNA
+p_load(rDNA, statnet, GGally, ggnet, network, sna, ggplot2, dplyr)
+```
+
+Now, users are able to connect to DNA via R and import the dataset
+(“dna_example_UKIraqWar2003.dna”). The various node attributes are then
+saved in different objects (`organization`, `person`, `concept`).
+
+``` r
+# loading dna
+dna_init()
+
+# connection to DNA-file
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+
+# read and save node attributes 
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+```
+
+## Plotting Affiliation Networks
+
+``` r
+concepts_2002 <- dna_barplot(conn, 
+                             of = "concept", fontSize = 10, 
+                             stop.date = "01.01.2003")
+
+concepts_2002
+```
+
+![](README_files/figure-gfm/barplot-concepts2002-1.png)<!-- -->
+
+``` r
+concepts_2003 <- dna_barplot(conn, 
+                             of = "concept", fontSize = 10, 
+                             start.date = "01.01.2003")
+
+concepts_2003
+```
+
+![](README_files/figure-gfm/barplot-concepts2003-1.png)<!-- -->
+
+``` r
+selection_person <- person %>% filter(frequency >9)
+selection_person$value
+```
+
+    ##  [1] "A MacKay"        "A Simpson"       "B George"        "C Kennedy"      
+    ##  [5] "D Anderson"      "D Hogg"          "D Trimble"       "E Leigh"        
+    ##  [9] "F Maude"         "G Clifton-Brown" "G Strang"        "ID Smith"       
+    ## [13] "J Straw"         "K Clarke"        "M Ancram"        "M Campbell"     
+    ## [17] "M Moore"         "P Kilfoyle"      "T Blair"         "T Lloyd"
+
+``` r
+exclusion_person <- person %>% filter(frequency < 10)
+
+selection_concept <- c(1, 11, 12, 13)
+concept$value[selection_concept]
+```
+
+    ## [1] "01 - imminent"               "22 - war"                   
+    ## [3] "23 - containment/deterrence" "24 - inspections"
+
+``` r
+exclusion_concept <- concept$value[-selection_concept]
+
+
+# Affiliation network
+## person x concept, substract-method and normalization, including duplicates
+affil <- dna_network(conn,
+                          networkType = "twomode",
+                          statementType = "DNA Statement",
+                          variable1 = "person",
+                          variable2 = "concept",
+                          qualifier = "agreement",
+                          qualifierAggregation = "subtract",
+                          normalization = "prominence",
+                          duplicates = "document",
+                          verbose = TRUE,
+                     excludeValues = list(person = exclusion_person$value,
+                                          concept = exclusion_concept))
+```
+
+    ## (1/5): Processing network options... Done.
+    ## (2/5): Filtering statements...
+    ##        [Excluded] person: A Beith
+    ##        [Excluded] person: A Browning
+    ##        [Excluded] person: A Campbell
+    ##        [Excluded] person: A Carmichael
+    ##        [Excluded] person: A Clwyd
+    ##        [Excluded] person: A Duncan
+    ##        [Excluded] person: A Howarth
+    ##        [Excluded] person: A Ingram
+    ##        [Excluded] person: A Mahon
+    ##        [Excluded] person: A Robathan
+    ##        [Excluded] person: A Robertson
+    ##        [Excluded] person: A Salmond
+    ##        [Excluded] person: A Selous
+    ##        [Excluded] person: A Tyrie
+    ##        [Excluded] person: B Bradshaw
+    ##        [Excluded] person: B Gardiner
+    ##        [Excluded] person: B Jenkin
+    ##        [Excluded] person: B Johnson
+    ##        [Excluded] person: B Sedgemore
+    ##        [Excluded] person: B Spink
+    ##        [Excluded] person: B Tynan
+    ##        [Excluded] person: C Efford
+    ##        [Excluded] person: C Flint
+    ##        [Excluded] person: C MacDonald
+    ##        [Excluded] person: C Smith
+    ##        [Excluded] person: C Soley
+    ##        [Excluded] person: D Chaytor
+    ##        [Excluded] person: D Curry
+    ##        [Excluded] person: D Foster
+    ##        [Excluded] person: D Grieve
+    ##        [Excluded] person: D Heath
+    ##        [Excluded] person: D Henderson
+    ##        [Excluded] person: D Mawhinney
+    ##        [Excluded] person: D Winnick
+    ##        [Excluded] person: E Garnier
+    ##        [Excluded] person: E Llwyd
+    ##        [Excluded] person: E Ross
+    ##        [Excluded] person: F Cook
+    ##        [Excluded] person: F Dobson
+    ##        [Excluded] person: G Davies
+    ##        [Excluded] person: G Foulkes
+    ##        [Excluded] person: G Galloway
+    ##        [Excluded] person: G Howarth
+    ##        [Excluded] person: G Jackson
+    ##        [Excluded] person: G Kaufman
+    ##        [Excluded] person: G Osborne
+    ##        [Excluded] person: G Prentice
+    ##        [Excluded] person: G Streeter
+    ##        [Excluded] person: G Young
+    ##        [Excluded] person: H Bayley
+    ##        [Excluded] person: H Cohen
+    ##        [Excluded] person: H Jackson
+    ##        [Excluded] person: I Paisley
+    ##        [Excluded] person: I Taylor
+    ##        [Excluded] person: J Baron
+    ##        [Excluded] person: J Barrett
+    ##        [Excluded] person: J Bazier
+    ##        [Excluded] person: J Bercow
+    ##        [Excluded] person: J Burnett
+    ##        [Excluded] person: J Corbyn
+    ##        [Excluded] person: J Denham
+    ##        [Excluded] person: J Dowd
+    ##        [Excluded] person: J Gummer
+    ##        [Excluded] person: J Hume
+    ##        [Excluded] person: J Knight
+    ##        [Excluded] person: J Lewis
+    ##        [Excluded] person: J Maples
+    ##        [Excluded] person: J Murphy
+    ##        [Excluded] person: J Paice
+    ##        [Excluded] person: J Quin
+    ##        [Excluded] person: J Randall
+    ##        [Excluded] person: J Ruddock
+    ##        [Excluded] person: J Sayeed
+    ##        [Excluded] person: J Stanley
+    ##        [Excluded] person: J Tonge
+    ##        [Excluded] person: J Wilkinson
+    ##        [Excluded] person: JM McDonnell
+    ##        [Excluded] person: JO Jones
+    ##        [Excluded] person: K Hughes
+    ##        [Excluded] person: K Mountford
+    ##        [Excluded] person: L Ellman
+    ##        [Excluded] person: L Gilroy
+    ##        [Excluded] person: L Hoyle
+    ##        [Excluded] person: L Jones
+    ##        [Excluded] person: L Smith
+    ##        [Excluded] person: L Öpik
+    ##        [Excluded] person: M Bruce
+    ##        [Excluded] person: M Francois
+    ##        [Excluded] person: M Gapes
+    ##        [Excluded] person: M Jack
+    ##        [Excluded] person: M O'Brien
+    ##        [Excluded] person: M O'Neill
+    ##        [Excluded] person: M Oaten
+    ##        [Excluded] person: M Portillo
+    ##        [Excluded] person: M Sarwar
+    ##        [Excluded] person: M Savidge
+    ##        [Excluded] person: M Singh
+    ##        [Excluded] person: M Smyth
+    ##        [Excluded] person: N Baker
+    ##        [Excluded] person: N Gerrard
+    ##        [Excluded] person: N Lamb
+    ##        [Excluded] person: N Palmer
+    ##        [Excluded] person: N Soames
+    ##        [Excluded] person: N Winterton
+    ##        [Excluded] person: O Kilfoyle
+    ##        [Excluded] person: O King
+    ##        [Excluded] person: P Bradley
+    ##        [Excluded] person: P Calton
+    ##        [Excluded] person: P Cormack
+    ##        [Excluded] person: P Flynn
+    ##        [Excluded] person: P Keetch
+    ##        [Excluded] person: P Mandelson
+    ##        [Excluded] person: P Marsden
+    ##        [Excluded] person: P Mercer
+    ##        [Excluded] person: P Pike
+    ##        [Excluded] person: P Tapsell
+    ##        [Excluded] person: R Allan
+    ##        [Excluded] person: R Burden
+    ##        [Excluded] person: R Casale
+    ##        [Excluded] person: R Godsiff
+    ##        [Excluded] person: R Key
+    ##        [Excluded] person: R Marshall-Andrews
+    ##        [Excluded] person: R Ottaway
+    ##        [Excluded] person: R Page
+    ##        [Excluded] person: R Walter
+    ##        [Excluded] person: S Bell
+    ##        [Excluded] person: S Doughty
+    ##        [Excluded] person: S Hughes
+    ##        [Excluded] person: S Ladyman
+    ##        [Excluded] person: S McCabe
+    ##        [Excluded] person: S Thomas
+    ##        [Excluded] person: T Banks
+    ##        [Excluded] person: T Clarke
+    ##        [Excluded] person: T Davis
+    ##        [Excluded] person: T Levitt
+    ##        [Excluded] person: T Taylor
+    ##        [Excluded] person: T Worthington
+    ##        [Excluded] person: T Wright
+    ##        [Excluded] person: W David
+    ##        [Excluded] person: W Griffiths
+    ##        [Excluded] person: W Hague
+    ##        [Excluded] concept: 02 - overall
+    ##        [Excluded] concept: 03 - region
+    ##        [Excluded] concept: 04 - WMD
+    ##        [Excluded] concept: 05 - terrorism
+    ##        [Excluded] concept: 06 - missiles
+    ##        [Excluded] concept: 07 - humanitarian
+    ##        [Excluded] concept: 08 - international order
+    ##        [Excluded] concept: 09 - unilateralism
+    ##        [Excluded] concept: 21 - regime change
+    ##        [Excluded] concept: 25 - disarmament
+    ##        [Excluded] concept: 26 - sanctions
+    ##        [Excluded] concept: 27 - all options
+    ##        [Excluded] concept: 28 - negotiations
+    ##        [Excluded] concept: 29 - United Nations
+    ##        [Excluded] concept: 31 - alliance
+    ##        [Excluded] concept: 32 - reintegration
+    ##        [Excluded] concept: 33 - democracy
+    ##        [Excluded] concept: 34 - stabilization
+    ##        117 out of 1166 statements retained.
+    ## (3/5): Compiling node labels... 
+    ##        20 entries for the first and 4 entries for the second variable.
+    ## (4/5): Computing network matrix... Done.
+    ## (5/5): Retrieving results.
+
+``` r
+x <- t(affil)
+y <- selection_person %>% filter(value %in% colnames(x))
+
+nw <- network(affil, bipartite = TRUE)
+
+colors <- as.character(t(affil))
+colors <- colors[colors != "0"]
+colors[colors < 0] <- "gray85"
+colors[colors != "gray85"] <- "black"
+set.edge.attribute(nw, "color", colors)
+
+plot(nw,
+     edge.col = get.edge.attribute(nw, "color"),
+     vertex.col = c(y$color,
+                    rep("white", ncol(affil))),
+     displaylabels = TRUE,
+     label.cex = 0.5,
+)
+```
+
+<img src="README_files/figure-gfm/affiliation network-1.png" width="150%" />
+
+## Plotting Congruence Networks
+
+``` r
+set.seed(19030023)
+
+selection_concept <- c(1, 11, 12, 13)
+concept$value[selection_concept]
+```
+
+    ## [1] "01 - imminent"               "22 - war"                   
+    ## [3] "23 - containment/deterrence" "24 - inspections"
+
+``` r
+exclusion_concept <- concept$value[-selection_concept]
+
+selection_person <- person %>% filter(frequency >5)
+selection_person$value
+```
+
+    ##  [1] "A Browning"      "A Clwyd"         "A Duncan"        "A Howarth"      
+    ##  [5] "A Ingram"        "A MacKay"        "A Mahon"         "A Robathan"     
+    ##  [9] "A Salmond"       "A Simpson"       "B Gardiner"      "B George"       
+    ## [13] "B Tynan"         "C Kennedy"       "C MacDonald"     "C Smith"        
+    ## [17] "D Anderson"      "D Heath"         "D Hogg"          "D Trimble"      
+    ## [21] "D Winnick"       "E Garnier"       "E Leigh"         "F Maude"        
+    ## [25] "G Clifton-Brown" "G Davies"        "G Foulkes"       "G Jackson"      
+    ## [29] "G Strang"        "H Bayley"        "I Paisley"       "ID Smith"       
+    ## [33] "J Lewis"         "J Quin"          "J Sayeed"        "J Straw"        
+    ## [37] "JM McDonnell"    "K Clarke"        "M Ancram"        "M Bruce"        
+    ## [41] "M Campbell"      "M Moore"         "M O'Brien"       "M Sarwar"       
+    ## [45] "M Savidge"       "N Baker"         "N Soames"        "O King"         
+    ## [49] "P Kilfoyle"      "P Mandelson"     "R Godsiff"       "R Key"          
+    ## [53] "R Ottaway"       "R Walter"        "S Doughty"       "S McCabe"       
+    ## [57] "T Blair"         "T Lloyd"         "W Hague"
+
+``` r
+exclusion_person <- person %>% filter(frequency < 6)
+
+congruence_2002 <- dna_network(conn,
+                    networkType = "onemode",
+                    statementType = "DNA Statement",
+                    variable1 = "person",
+                    variable2 = "concept",
+                    qualifier = "agreement",
+                    qualifierAggregation = "congruence",
+                    stop.date = "01.01.2003",
+                    duplicates = "week",
+                    excludeValues = list(person = exclusion_person$value,
+                                         concept = exclusion_concept))
+```
+
+    ## (1/5): Processing network options... Done.
+    ## (2/5): Filtering statements...
+    ##        [Excluded] person: A Beith
+    ##        [Excluded] person: A Campbell
+    ##        [Excluded] person: A Carmichael
+    ##        [Excluded] person: A Robertson
+    ##        [Excluded] person: A Selous
+    ##        [Excluded] person: A Tyrie
+    ##        [Excluded] person: B Bradshaw
+    ##        [Excluded] person: B Jenkin
+    ##        [Excluded] person: B Johnson
+    ##        [Excluded] person: B Sedgemore
+    ##        [Excluded] person: B Spink
+    ##        [Excluded] person: C Efford
+    ##        [Excluded] person: C Flint
+    ##        [Excluded] person: C Soley
+    ##        [Excluded] person: D Chaytor
+    ##        [Excluded] person: D Curry
+    ##        [Excluded] person: D Foster
+    ##        [Excluded] person: D Grieve
+    ##        [Excluded] person: D Henderson
+    ##        [Excluded] person: D Mawhinney
+    ##        [Excluded] person: E Llwyd
+    ##        [Excluded] person: E Ross
+    ##        [Excluded] person: F Cook
+    ##        [Excluded] person: F Dobson
+    ##        [Excluded] person: G Galloway
+    ##        [Excluded] person: G Howarth
+    ##        [Excluded] person: G Kaufman
+    ##        [Excluded] person: G Osborne
+    ##        [Excluded] person: G Prentice
+    ##        [Excluded] person: G Streeter
+    ##        [Excluded] person: G Young
+    ##        [Excluded] person: H Cohen
+    ##        [Excluded] person: H Jackson
+    ##        [Excluded] person: I Taylor
+    ##        [Excluded] person: J Baron
+    ##        [Excluded] person: J Barrett
+    ##        [Excluded] person: J Bazier
+    ##        [Excluded] person: J Bercow
+    ##        [Excluded] person: J Burnett
+    ##        [Excluded] person: J Corbyn
+    ##        [Excluded] person: J Denham
+    ##        [Excluded] person: J Dowd
+    ##        [Excluded] person: J Gummer
+    ##        [Excluded] person: J Hume
+    ##        [Excluded] person: J Knight
+    ##        [Excluded] person: J Maples
+    ##        [Excluded] person: J Murphy
+    ##        [Excluded] person: J Paice
+    ##        [Excluded] person: J Randall
+    ##        [Excluded] person: J Ruddock
+    ##        [Excluded] person: J Stanley
+    ##        [Excluded] person: J Tonge
+    ##        [Excluded] person: J Wilkinson
+    ##        [Excluded] person: JO Jones
+    ##        [Excluded] person: K Hughes
+    ##        [Excluded] person: K Mountford
+    ##        [Excluded] person: L Ellman
+    ##        [Excluded] person: L Gilroy
+    ##        [Excluded] person: L Hoyle
+    ##        [Excluded] person: L Jones
+    ##        [Excluded] person: L Smith
+    ##        [Excluded] person: L Öpik
+    ##        [Excluded] person: M Francois
+    ##        [Excluded] person: M Gapes
+    ##        [Excluded] person: M Jack
+    ##        [Excluded] person: M O'Neill
+    ##        [Excluded] person: M Oaten
+    ##        [Excluded] person: M Portillo
+    ##        [Excluded] person: M Singh
+    ##        [Excluded] person: M Smyth
+    ##        [Excluded] person: N Gerrard
+    ##        [Excluded] person: N Lamb
+    ##        [Excluded] person: N Palmer
+    ##        [Excluded] person: N Winterton
+    ##        [Excluded] person: O Kilfoyle
+    ##        [Excluded] person: P Bradley
+    ##        [Excluded] person: P Calton
+    ##        [Excluded] person: P Cormack
+    ##        [Excluded] person: P Flynn
+    ##        [Excluded] person: P Keetch
+    ##        [Excluded] person: P Marsden
+    ##        [Excluded] person: P Mercer
+    ##        [Excluded] person: P Pike
+    ##        [Excluded] person: P Tapsell
+    ##        [Excluded] person: R Allan
+    ##        [Excluded] person: R Burden
+    ##        [Excluded] person: R Casale
+    ##        [Excluded] person: R Marshall-Andrews
+    ##        [Excluded] person: R Page
+    ##        [Excluded] person: S Bell
+    ##        [Excluded] person: S Hughes
+    ##        [Excluded] person: S Ladyman
+    ##        [Excluded] person: S Thomas
+    ##        [Excluded] person: T Banks
+    ##        [Excluded] person: T Clarke
+    ##        [Excluded] person: T Davis
+    ##        [Excluded] person: T Levitt
+    ##        [Excluded] person: T Taylor
+    ##        [Excluded] person: T Worthington
+    ##        [Excluded] person: T Wright
+    ##        [Excluded] person: W David
+    ##        [Excluded] person: W Griffiths
+    ##        [Excluded] concept: 02 - overall
+    ##        [Excluded] concept: 03 - region
+    ##        [Excluded] concept: 04 - WMD
+    ##        [Excluded] concept: 05 - terrorism
+    ##        [Excluded] concept: 06 - missiles
+    ##        [Excluded] concept: 07 - humanitarian
+    ##        [Excluded] concept: 08 - international order
+    ##        [Excluded] concept: 09 - unilateralism
+    ##        [Excluded] concept: 21 - regime change
+    ##        [Excluded] concept: 25 - disarmament
+    ##        [Excluded] concept: 26 - sanctions
+    ##        [Excluded] concept: 27 - all options
+    ##        [Excluded] concept: 28 - negotiations
+    ##        [Excluded] concept: 29 - United Nations
+    ##        [Excluded] concept: 31 - alliance
+    ##        [Excluded] concept: 32 - reintegration
+    ##        [Excluded] concept: 33 - democracy
+    ##        [Excluded] concept: 34 - stabilization
+    ##        60 out of 1166 statements retained.
+    ## (3/5): Compiling node labels... 
+    ##        34 entries for the first and 4 entries for the second variable.
+    ## (4/5): Computing network matrix... Done.
+    ## (5/5): Retrieving results.
+
+``` r
+nw_2002 <- network(congruence_2002)
+
+x <- t(congruence_2002)
+y <- selection_person %>% filter(value %in% row.names(x))
+
+plot(nw_2002,
+     edge.lwd = congruence_2002,
+     displaylabels = TRUE,
+     label.cex = 0.5,
+     usearrows = FALSE,
+     edge.col = "gray85",
+     vertex.col = y$color,
+     label = y$value
+     )
+```
+
+<img src="README_files/figure-gfm/congruence network 2002-1.png" width="150%" />
+
+``` r
+congruence_2003 <- dna_network(conn,
+                               networkType = "onemode",
+                               statementType = "DNA Statement",
+                               variable1 = "person",
+                               variable2 = "concept",
+                               qualifier = "agreement",
+                               qualifierAggregation = "congruence",
+                               start.date = "01.01.2003",
+                               duplicates = "week",
+                               excludeValues = list(person = exclusion_person$value,
+                                                    concept = exclusion_concept))
+```
+
+    ## (1/5): Processing network options... Done.
+    ## (2/5): Filtering statements...
+    ##        [Excluded] person: A Beith
+    ##        [Excluded] person: A Campbell
+    ##        [Excluded] person: A Carmichael
+    ##        [Excluded] person: A Robertson
+    ##        [Excluded] person: A Selous
+    ##        [Excluded] person: A Tyrie
+    ##        [Excluded] person: B Bradshaw
+    ##        [Excluded] person: B Jenkin
+    ##        [Excluded] person: B Johnson
+    ##        [Excluded] person: B Sedgemore
+    ##        [Excluded] person: B Spink
+    ##        [Excluded] person: C Efford
+    ##        [Excluded] person: C Flint
+    ##        [Excluded] person: C Soley
+    ##        [Excluded] person: D Chaytor
+    ##        [Excluded] person: D Curry
+    ##        [Excluded] person: D Foster
+    ##        [Excluded] person: D Grieve
+    ##        [Excluded] person: D Henderson
+    ##        [Excluded] person: D Mawhinney
+    ##        [Excluded] person: E Llwyd
+    ##        [Excluded] person: E Ross
+    ##        [Excluded] person: F Cook
+    ##        [Excluded] person: F Dobson
+    ##        [Excluded] person: G Galloway
+    ##        [Excluded] person: G Howarth
+    ##        [Excluded] person: G Kaufman
+    ##        [Excluded] person: G Osborne
+    ##        [Excluded] person: G Prentice
+    ##        [Excluded] person: G Streeter
+    ##        [Excluded] person: G Young
+    ##        [Excluded] person: H Cohen
+    ##        [Excluded] person: H Jackson
+    ##        [Excluded] person: I Taylor
+    ##        [Excluded] person: J Baron
+    ##        [Excluded] person: J Barrett
+    ##        [Excluded] person: J Bazier
+    ##        [Excluded] person: J Bercow
+    ##        [Excluded] person: J Burnett
+    ##        [Excluded] person: J Corbyn
+    ##        [Excluded] person: J Denham
+    ##        [Excluded] person: J Dowd
+    ##        [Excluded] person: J Gummer
+    ##        [Excluded] person: J Hume
+    ##        [Excluded] person: J Knight
+    ##        [Excluded] person: J Maples
+    ##        [Excluded] person: J Murphy
+    ##        [Excluded] person: J Paice
+    ##        [Excluded] person: J Randall
+    ##        [Excluded] person: J Ruddock
+    ##        [Excluded] person: J Stanley
+    ##        [Excluded] person: J Tonge
+    ##        [Excluded] person: J Wilkinson
+    ##        [Excluded] person: JO Jones
+    ##        [Excluded] person: K Hughes
+    ##        [Excluded] person: K Mountford
+    ##        [Excluded] person: L Ellman
+    ##        [Excluded] person: L Gilroy
+    ##        [Excluded] person: L Hoyle
+    ##        [Excluded] person: L Jones
+    ##        [Excluded] person: L Smith
+    ##        [Excluded] person: L Öpik
+    ##        [Excluded] person: M Francois
+    ##        [Excluded] person: M Gapes
+    ##        [Excluded] person: M Jack
+    ##        [Excluded] person: M O'Neill
+    ##        [Excluded] person: M Oaten
+    ##        [Excluded] person: M Portillo
+    ##        [Excluded] person: M Singh
+    ##        [Excluded] person: M Smyth
+    ##        [Excluded] person: N Gerrard
+    ##        [Excluded] person: N Lamb
+    ##        [Excluded] person: N Palmer
+    ##        [Excluded] person: N Winterton
+    ##        [Excluded] person: O Kilfoyle
+    ##        [Excluded] person: P Bradley
+    ##        [Excluded] person: P Calton
+    ##        [Excluded] person: P Cormack
+    ##        [Excluded] person: P Flynn
+    ##        [Excluded] person: P Keetch
+    ##        [Excluded] person: P Marsden
+    ##        [Excluded] person: P Mercer
+    ##        [Excluded] person: P Pike
+    ##        [Excluded] person: P Tapsell
+    ##        [Excluded] person: R Allan
+    ##        [Excluded] person: R Burden
+    ##        [Excluded] person: R Casale
+    ##        [Excluded] person: R Marshall-Andrews
+    ##        [Excluded] person: R Page
+    ##        [Excluded] person: S Bell
+    ##        [Excluded] person: S Hughes
+    ##        [Excluded] person: S Ladyman
+    ##        [Excluded] person: S Thomas
+    ##        [Excluded] person: T Banks
+    ##        [Excluded] person: T Clarke
+    ##        [Excluded] person: T Davis
+    ##        [Excluded] person: T Levitt
+    ##        [Excluded] person: T Taylor
+    ##        [Excluded] person: T Worthington
+    ##        [Excluded] person: T Wright
+    ##        [Excluded] person: W David
+    ##        [Excluded] person: W Griffiths
+    ##        [Excluded] concept: 02 - overall
+    ##        [Excluded] concept: 03 - region
+    ##        [Excluded] concept: 04 - WMD
+    ##        [Excluded] concept: 05 - terrorism
+    ##        [Excluded] concept: 06 - missiles
+    ##        [Excluded] concept: 07 - humanitarian
+    ##        [Excluded] concept: 08 - international order
+    ##        [Excluded] concept: 09 - unilateralism
+    ##        [Excluded] concept: 21 - regime change
+    ##        [Excluded] concept: 25 - disarmament
+    ##        [Excluded] concept: 26 - sanctions
+    ##        [Excluded] concept: 27 - all options
+    ##        [Excluded] concept: 28 - negotiations
+    ##        [Excluded] concept: 29 - United Nations
+    ##        [Excluded] concept: 31 - alliance
+    ##        [Excluded] concept: 32 - reintegration
+    ##        [Excluded] concept: 33 - democracy
+    ##        [Excluded] concept: 34 - stabilization
+    ##        135 out of 1166 statements retained.
+    ## (3/5): Compiling node labels... 
+    ##        46 entries for the first and 4 entries for the second variable.
+    ## (4/5): Computing network matrix... Done.
+    ## (5/5): Retrieving results.
+
+``` r
+nw_2003 <- network(congruence_2003)
+
+x <- t(congruence_2003)
+y <- selection_person %>% filter(value %in% row.names(x))
+
+plot(nw_2003,
+     displaylabels = TRUE,
+     label.cex = 0.5,
+     usearrows = FALSE,
+     edge.col = "gray85",
+     vertex.col = y$color,
+     label = y$value
+     )
+```
+
+<img src="README_files/figure-gfm/congruence network 2003-1.png" width="150%" />
+
+## Cluster Analysis
+
+``` r
+selection <- c(1, 11, 12, 13)
+concept$value[selection]
+```
+
+    ## [1] "01 - imminent"               "22 - war"                   
+    ## [3] "23 - containment/deterrence" "24 - inspections"
+
+``` r
+exclusion <- concept$value[-selection]
+
+clust_2002 <- dna_cluster(conn,
+                          stop.date = "01.01.2003",
+                          clust.method = "edge_betweenness",
+                          duplicates = "document",
+                          excludeValues = list(concept = exclusion))
+```
+
+    ## Warning: In factor analysis:  Error in optim(start, FAfn, FAgr, method = "L-BFGS-B", lower = lower, : nicht endlicher Wert von optim angegeben
+
+``` r
+dna_plotDendro(clust_2002,
+               show_legend = FALSE)
+```
+
+<img src="README_files/figure-gfm/cluster analysis 2002-1.png" width="150%" />
+
+``` r
+selection <- c(1, 11, 12, 13)
+concept$value[selection]
+```
+
+    ## [1] "01 - imminent"               "22 - war"                   
+    ## [3] "23 - containment/deterrence" "24 - inspections"
+
+``` r
+exclusion <- concept$value[-selection]
+
+clust_2003 <- dna_cluster(conn,
+                          start.date = "01.01.2003",
+                          clust.method = "edge_betweenness",
+                          duplicates = "document",
+                          excludeValues = list(concept = exclusion))
+```
+
+    ## Warning: In factor analysis:  Error in solve.default(cv): Lapackroutine dgesv: System ist genau singulär: U[8,8] = 0
+
+    ## Warning in type.convert.default(unlist(x, use.names = FALSE)): 'as.is' should be
+    ## specified by the caller; using TRUE
+
+``` r
+dna_plotDendro(clust_2003,
+               show_legend = FALSE)
+```
+
+<img src="README_files/figure-gfm/cluster analysis 2003-1.png" width="150%" />
 
 # Bibliography
 

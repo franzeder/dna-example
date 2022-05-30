@@ -75,9 +75,277 @@ In total, I used the 22 claims to code 1,166 statements of 161 persons (i.e., Me
 
 # Network Analysis
 
-After coding the dataset, we then transform the generated data (i.e., the sum of coded statements) into a two-mode network (a bipartite graph), also known as an affiliation network of actors (or organizations) and claims (for the mathematical details of this transformation, see @Leifeld2019) that allows us to display the content, dynamic and drivers of political debates.
+After coding the dataset, we then transform the generated data (i.e., the sum of coded statements) into a two-mode network (a bipartite graph), also known as an affiliation network of actors (or organizations) and claims (for the mathematical details of this transformation, see @Leifeld2019), that allows us to display the content, dynamic and drivers of political debates. Chapter 7 (pages 59-79) of the [*Discourse Network Analyzer Manual*](https://github.com/leifeld/dna/releases/download/v2.0-beta.24/dna-manual.pdf) discusses this export with its many options in detail.
+
+In the next paragraphs I will focus on the `R-Code` and show how to import, analyze and plot the coded-data in this framework (see also Chapter 8 (pages 80-119) of the [*Discourse Network Analyzer Manual*](https://github.com/leifeld/dna/releases/download/v2.0-beta.24/dna-manual.pdf)).
+
+## Installing and configuring R and all required packages
+
+Users first have to install the latest version of **R** -- "a free software environment for statistical computing and graphics" -- from [The Comprehensive R Archive Network](https://cran.r-project.org/). Users should then install [**RSTudio Desktop**](https://www.rstudio.com/products/rstudio/download/) -- "an integrated development environment (IDE) for R" -- that makes programming in R easier.
+
+After installing R and RStudio, users have to install all required packages (i.e., extensions that increase the functionality of R).
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages, eval=FALSE}
+install.packages("rJava")
+
+# package needed for installing R packages from Github
+install.packages("remotes")
+
+# installing rDNA package
+remotes::install_github("leifeld/dna/rDNA@*release",
+                        INSTALL_opts = "--no-multiarch")
+
+# installing ggnet2 package for plotting networks
+devtools::install_github("briatte/ggnet")
+
+# package for loading R packages and installing them, if they are not already installed
+install.packages("pacman")
+
+```
+
+In the next steps, users have to set the path for the working directory and load the required packages.
+
+```{r working-directory, cache=TRUE, message=FALSE}
+# set the working directory in RStudio to the current file location
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# loading the "pacman" package for loading (p_load) packages and installing them,
+## if they are not already installed
+require(pacman)
+
+# loading required packages for using RStudio to analyze DNA
+p_load(rDNA, statnet, GGally, ggnet, network, sna, ggplot2, dplyr)
+```
+
+Now, users are able to connect to DNA via R and import the dataset ("dna_example_UKIraqWar2003.dna"). The various node attributes are then saved in different objects (`organization`, `person`, `concept`).
+
+```{r dna-init, cache=TRUE, message=FALSE}
+# loading dna
+dna_init()
+
+# connection to DNA-file
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+
+# read and save node attributes 
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+```
+
+## Plotting Affiliation Networks
+
+```{r barplot-concepts2002, cache=TRUE, message=FALSE, echo=c(6:100)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+concepts_2002 <- dna_barplot(conn, 
+                             of = "concept", fontSize = 10, 
+                             stop.date = "01.01.2003")
+
+concepts_2002
+```
+
+```{r barplot-concepts2003, cache=TRUE, message=FALSE, echo=c(6:100)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+concepts_2003 <- dna_barplot(conn, 
+                             of = "concept", fontSize = 10, 
+                             start.date = "01.01.2003")
+
+concepts_2003
+```
 
 
+```{r affiliation network, out.width="150%", cache=TRUE, message=FALSE, echo=c(6:200)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+selection_person <- person %>% filter(frequency >9)
+selection_person$value
+exclusion_person <- person %>% filter(frequency < 10)
+
+selection_concept <- c(1, 11, 12, 13)
+concept$value[selection_concept]
+exclusion_concept <- concept$value[-selection_concept]
+
+
+# Affiliation network
+## person x concept, substract-method and normalization, including duplicates
+affil <- dna_network(conn,
+                          networkType = "twomode",
+                          statementType = "DNA Statement",
+                          variable1 = "person",
+                          variable2 = "concept",
+                          qualifier = "agreement",
+                          qualifierAggregation = "subtract",
+                          normalization = "prominence",
+                          duplicates = "document",
+                          verbose = TRUE,
+                     excludeValues = list(person = exclusion_person$value,
+                                          concept = exclusion_concept))
+
+x <- t(affil)
+y <- selection_person %>% filter(value %in% colnames(x))
+
+nw <- network(affil, bipartite = TRUE)
+
+colors <- as.character(t(affil))
+colors <- colors[colors != "0"]
+colors[colors < 0] <- "gray85"
+colors[colors != "gray85"] <- "black"
+set.edge.attribute(nw, "color", colors)
+
+plot(nw,
+     edge.col = get.edge.attribute(nw, "color"),
+     vertex.col = c(y$color,
+                    rep("white", ncol(affil))),
+     displaylabels = TRUE,
+     label.cex = 0.5,
+)
+```
+
+## Plotting Congruence Networks
+
+```{r congruence network 2002, out.width="150%", cache=TRUE, message=FALSE, echo=c(6:200)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+set.seed(19030023)
+
+selection_concept <- c(1, 11, 12, 13)
+concept$value[selection_concept]
+exclusion_concept <- concept$value[-selection_concept]
+
+selection_person <- person %>% filter(frequency >5)
+selection_person$value
+exclusion_person <- person %>% filter(frequency < 6)
+
+congruence_2002 <- dna_network(conn,
+                    networkType = "onemode",
+                    statementType = "DNA Statement",
+                    variable1 = "person",
+                    variable2 = "concept",
+                    qualifier = "agreement",
+                    qualifierAggregation = "congruence",
+                    stop.date = "01.01.2003",
+                    duplicates = "week",
+                    excludeValues = list(person = exclusion_person$value,
+                                         concept = exclusion_concept))
+
+nw_2002 <- network(congruence_2002)
+
+x <- t(congruence_2002)
+y <- selection_person %>% filter(value %in% row.names(x))
+
+plot(nw_2002,
+     edge.lwd = congruence_2002,
+     displaylabels = TRUE,
+     label.cex = 0.5,
+     usearrows = FALSE,
+     edge.col = "gray85",
+     vertex.col = y$color,
+     label = y$value
+     )
+```
+
+
+```{r congruence network 2003, out.width="150%", cache=TRUE, message=FALSE, echo=c(6:200)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+congruence_2003 <- dna_network(conn,
+                               networkType = "onemode",
+                               statementType = "DNA Statement",
+                               variable1 = "person",
+                               variable2 = "concept",
+                               qualifier = "agreement",
+                               qualifierAggregation = "congruence",
+                               start.date = "01.01.2003",
+                               duplicates = "week",
+                               excludeValues = list(person = exclusion_person$value,
+                                                    concept = exclusion_concept))
+
+nw_2003 <- network(congruence_2003)
+
+x <- t(congruence_2003)
+y <- selection_person %>% filter(value %in% row.names(x))
+
+plot(nw_2003,
+     displaylabels = TRUE,
+     label.cex = 0.5,
+     usearrows = FALSE,
+     edge.col = "gray85",
+     vertex.col = y$color,
+     label = y$value
+     )
+
+```
+
+## Cluster Analysis
+
+```{r cluster analysis 2002, out.width="150%", cache=TRUE, message=FALSE, echo=c(6:200)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+selection <- c(1, 11, 12, 13)
+concept$value[selection]
+exclusion <- concept$value[-selection]
+
+clust_2002 <- dna_cluster(conn,
+                          stop.date = "01.01.2003",
+                          clust.method = "edge_betweenness",
+                          duplicates = "document",
+                          excludeValues = list(concept = exclusion))
+
+dna_plotDendro(clust_2002,
+               show_legend = FALSE)
+
+```
+
+```{r cluster analysis 2003, out.width="150%", cache=TRUE, message=FALSE, echo=c(6:200)}
+dna_init()
+conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
+organization <- dna_getAttributes(conn, variable = "organization")
+person <- dna_getAttributes(conn, variable = "person")
+concept <- dna_getAttributes(conn, variable = "concept")
+
+selection <- c(1, 11, 12, 13)
+concept$value[selection]
+exclusion <- concept$value[-selection]
+
+clust_2003 <- dna_cluster(conn,
+                          start.date = "01.01.2003",
+                          clust.method = "edge_betweenness",
+                          duplicates = "document",
+                          excludeValues = list(concept = exclusion))
+
+dna_plotDendro(clust_2003,
+               show_legend = FALSE)
+
+```
 
 # Bibliography
 
