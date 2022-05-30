@@ -711,7 +711,7 @@ plot(nw_2002,
      )
 ```
 
-<img src="README_files/figure-gfm/congruence network 2002-1.png" width="150%" />
+![](README_files/figure-gfm/congruence%20network%202002-1.png)<!-- -->
 
 As the both plots clearly show, the majority of actors stuck together
 very closely in 2002, by referring to similar claims and united in
@@ -882,7 +882,7 @@ plot(nw_2003,
      )
 ```
 
-<img src="README_files/figure-gfm/congruence network 2003-1.png" width="150%" />
+![](README_files/figure-gfm/congruence%20network%202003-1.png)<!-- -->
 
 ## Cluster Analysis
 
@@ -914,7 +914,7 @@ dna_plotDendro(clust_2002,
                show_legend = FALSE)
 ```
 
-<img src="README_files/figure-gfm/cluster analysis 2002-1.png" width="150%" />
+![](README_files/figure-gfm/cluster%20analysis%202002-1.png)<!-- -->
 
 The interesting point here is, that the Cabinet’s final discourse in the
 debate in 2003 resembled the discourse of the Conservative party (i.e.,
@@ -944,7 +944,7 @@ dna_plotDendro(clust_2003,
                show_legend = FALSE)
 ```
 
-<img src="README_files/figure-gfm/cluster analysis 2003-1.png" width="150%" />
+![](README_files/figure-gfm/cluster%20analysis%202003-1.png)<!-- -->
 
 # Bibliography
 

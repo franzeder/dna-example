@@ -227,7 +227,7 @@ plot(nw,
 
 After plotting the affiliation network, we can now have a closer look at the congruence network, that  displays the links of actors based on their shared use of claims. To highlight the dynamic character of the debate, we group these congruence networks in two periods, that is the years **2002** and **2003**.
 
-```{r congruence network 2002, out.width="150%", cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
+```{r congruence network 2002, cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
 dna_init()
 conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
 organization <- dna_getAttributes(conn, variable = "organization")
@@ -274,7 +274,7 @@ plot(nw_2002,
 
 As the both plots clearly show, the majority of actors stuck together very closely in  2002, by referring to similar claims and united in opposition to war as a policy option. Furthermore, already in 2002, PM Blair (accompanied by another cabinet member and Tory MPs) deviated from this anti-war discourse. In 2003, however, the PM and his cabinet (high edge betweenness of PM Blair and Foreign Secretary Straw) were successful in convincing a majority of MPs that war is a necessary evil. Hence, the discourse in 2003 is characterized by **two opposing discourse coalitions** – one coalition in favor and one against war as viable option.
 
-```{r congruence network 2003, out.width="150%", cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
+```{r congruence network 2003, cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
 dna_init()
 conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
 organization <- dna_getAttributes(conn, variable = "organization")
@@ -313,7 +313,7 @@ plot(nw_2003,
 
 In the final step, we **cluster organizations** (i.e., parties) according to their overall positions towards the four central claims mentioned before and display these organizations as distinctive branches by using the `dna_cluster` command. Organizations of the same branch or subbranch are ideologically closer than organizations of different branches.
 
-```{r cluster analysis 2002, out.width="150%", cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
+```{r cluster analysis 2002, cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
 dna_init()
 conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
 organization <- dna_getAttributes(conn, variable = "organization")
@@ -337,7 +337,7 @@ dna_plotDendro(clust_2002,
 
 The interesting point here is, that the Cabinet’s final discourse in the debate in 2003 resembled the discourse of the Conservative party (i.e., the major opposition). In contrast, Labour’s discourse (i.e., the discourse of PM’s own party) shared more of the claims the Liberal Democrats (i.e., the major opposition to war) applied in their storylines.
 
-```{r cluster analysis 2003, out.width="150%", cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
+```{r cluster analysis 2003, cache=TRUE, warning=FALSE, message=FALSE, echo=c(6:200)}
 dna_init()
 conn <- dna_connection("dna_example_UKIraqWar2003.dna", verbose = FALSE)
 organization <- dna_getAttributes(conn, variable = "organization")
